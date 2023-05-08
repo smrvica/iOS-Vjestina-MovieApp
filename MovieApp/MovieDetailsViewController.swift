@@ -74,11 +74,12 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     
     private func defineLayout() {
         movieBanner.autoPinEdge(toSuperviewEdge: .top)
-        movieBanner.autoMatch(.width, to: .width, of: view)
+        movieBanner.autoPinEdge(toSuperviewEdge: .leading)
+        movieBanner.autoPinEdge(toSuperviewEdge: .trailing)
         
         overview.autoPinEdge(.top, to: .bottom, of: movieBanner, withOffset: 22)
         overview.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-        overview.autoSetDimension(.height, toSize: 31)
+        overview.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         
         summary.autoPinEdge(.top, to: .bottom, of: overview, withOffset: 8)
         summary.autoMatch(.width, to: .width, of: view, withOffset: -32)
@@ -91,7 +92,7 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return crewList.count
+        crewList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

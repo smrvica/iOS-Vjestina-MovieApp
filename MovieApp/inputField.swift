@@ -9,12 +9,12 @@ import Foundation
 import UIKit
 import PureLayout
 
-class inputField: UIView {
+class InputField: UIView {
     
-    let label = UILabel()
-    var labelText: String
-    let inputField = UITextField()
-    var placeHolder: String
+    private var fieldLabel: UILabel!
+    private let labelText: String
+    private var inputField: UITextField!
+    private let placeHolder: String
     
     let color = UIColor(red: 76/255, green: 178/255, blue: 223/255, alpha: 1)
     
@@ -22,38 +22,39 @@ class inputField: UIView {
         self.labelText = labelText
         self.placeHolder = placeHolder
         super.init(frame: .zero)
-        self.configure()
+        self.buildViews()
     }
     
     required init?(coder aDecoder: NSCoder) {
         self.labelText = ""
         self.placeHolder = ""
         super.init(coder: aDecoder)
-        self.configure()
+        self.buildViews()
     }
     
-    private func configure() {
-        create()
-        style()
-        layout()
+    private func buildViews() {
+        createViews()
+        styleViews()
+        defineLayout()
     }
     
-    private func create() {
-        self.addSubview(label)
+    private func createViews() {
+        fieldLabel = UILabel()
+        self.addSubview(fieldLabel)
+        inputField = UITextField()
         self.addSubview(inputField)
-        
-        label.text = labelText
-        inputField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [NSAttributedString.Key.foregroundColor: color])
     }
     
-    private func style() {
-        label.textColor = .white
-        label.font = UIFont.boldSystemFont(ofSize: 14)
+    private func styleViews() {
+        
+        fieldLabel.text = labelText
+        fieldLabel.textColor = .white
+        fieldLabel.font = UIFont.boldSystemFont(ofSize: 14)
         
         inputField.font = UIFont.systemFont(ofSize: 16)
         inputField.textColor = color
         inputField.backgroundColor = UIColor(red: 19/255, green: 59/255, blue: 99/255, alpha: 1)
-        inputField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [NSAttributedString.Key.foregroundColor: UIColor(red: 76/255, green: 178/255, blue: 223/255, alpha: 1)])
+        inputField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [NSAttributedString.Key.foregroundColor: color])
         inputField.layer.borderColor = CGColor(red: 21/255, green: 77/255, blue: 133/255, alpha: 1)
         inputField.layer.borderWidth = 1
         inputField.layer.shadowColor = UIColor.black.cgColor
@@ -69,17 +70,16 @@ class inputField: UIView {
         inputField.rightViewMode = .always
     }
     
-    private func layout() {
-        label.autoPinEdge(toSuperviewEdge: .top)
-        label.autoPinEdge(toSuperviewEdge: .leading)
-        label.autoPinEdge(toSuperviewEdge: .trailing)
-        label.autoSetDimension(.height, toSize: 20)
+    private func defineLayout() {
+        fieldLabel.autoPinEdge(toSuperviewEdge: .top)
+        fieldLabel.autoPinEdge(toSuperviewEdge: .leading)
+        fieldLabel.autoPinEdge(toSuperviewEdge: .trailing)
         
         inputField.autoPinEdge(toSuperviewEdge: .bottom)
         inputField.autoPinEdge(toSuperviewEdge: .leading)
         inputField.autoPinEdge(toSuperviewEdge: .trailing)
         inputField.autoSetDimension(.height, toSize: 48)
-        inputField.autoPinEdge(.top, to: .bottom, of: label, withOffset: 8)
+        inputField.autoPinEdge(.top, to: .bottom, of: fieldLabel, withOffset: 8)
     }
     
 }
