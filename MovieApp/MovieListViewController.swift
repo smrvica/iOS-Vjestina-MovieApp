@@ -16,6 +16,17 @@ class MovieListViewController : UIViewController {
     var movieList: [MovieModel]!
     let reuseId = "cell"
     
+    private let movieDetailsRouter: MovieDetailsRouter
+    
+    init(router: MovieDetailsRouter) {
+        movieDetailsRouter = router
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // load info
@@ -47,11 +58,12 @@ class MovieListViewController : UIViewController {
     
     private func styleViews() {
         view.backgroundColor = .white
+        navigationItem.title = "Movie List"
     }
     
     private func defineLayout() {
-        movieCollectionView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 16)
-        movieCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 16)
+        movieCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
+        movieCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
         movieCollectionView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 20)
         movieCollectionView.autoPinEdge(toSuperviewSafeArea: .bottom)
     }
@@ -66,7 +78,7 @@ extension MovieListViewController: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = movieCollectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! MovieSummaryCell
         let movie = movieList[indexPath.item]
-        cell.setData(name: movie.name, summary: movie.summary, imageURL: movie.imageUrl)
+        cell.setData(name: movie.name, summary: movie.summary, imageURL: movie.imageUrl,id: movie.id,router: movieDetailsRouter)
         
         return cell
     }

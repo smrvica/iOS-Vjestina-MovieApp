@@ -12,16 +12,27 @@ import MovieAppData
 
 class MovieCategorisedViewController : UIViewController {
     
-    var scrollView : UIScrollView!
-    var contentView : UIView!
-    var stackView : UIStackView!
+    private var scrollView : UIScrollView!
+    private var contentView : UIView!
+    private var stackView : UIStackView!
     
-    var moviePopularList : [MovieModel]!
-    var moviePopularCollectionView : MovieCategorisedCollectionView!
-    var movieFreeList : [MovieModel]!
-    var movieFreeCollectionView : MovieCategorisedCollectionView!
-    var movieTrendingList : [MovieModel]!
-    var movieTrendingCollectionView : MovieCategorisedCollectionView!
+    private var moviePopularList : [MovieModel]!
+    private var moviePopularCollectionView : MovieCategorisedCollectionView!
+    private var movieFreeList : [MovieModel]!
+    private var movieFreeCollectionView : MovieCategorisedCollectionView!
+    private var movieTrendingList : [MovieModel]!
+    private var movieTrendingCollectionView : MovieCategorisedCollectionView!
+    
+    private let movieDetailsRouter: MovieDetailsRouter
+    
+    init(router: MovieDetailsRouter) {
+        movieDetailsRouter = router
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,16 +59,17 @@ class MovieCategorisedViewController : UIViewController {
         stackView = UIStackView()
         contentView.addSubview(stackView)
         
-        moviePopularCollectionView = MovieCategorisedCollectionView(category: "What's popular", listOfMovies: moviePopularList)
+        moviePopularCollectionView = MovieCategorisedCollectionView(category: "What's popular", listOfMovies: moviePopularList, router: movieDetailsRouter)
         stackView.addArrangedSubview(moviePopularCollectionView)
-        movieFreeCollectionView = MovieCategorisedCollectionView(category: "Free to watch", listOfMovies: movieFreeList)
+        movieFreeCollectionView = MovieCategorisedCollectionView(category: "Free to watch", listOfMovies: movieFreeList, router: movieDetailsRouter)
         stackView.addArrangedSubview(movieFreeCollectionView)
-        movieTrendingCollectionView = MovieCategorisedCollectionView(category: "Trending", listOfMovies: movieTrendingList)
+        movieTrendingCollectionView = MovieCategorisedCollectionView(category: "Trending", listOfMovies: movieTrendingList, router: movieDetailsRouter)
         stackView.addArrangedSubview(movieTrendingCollectionView)
     }
     
     private func styleViews() {
         view.backgroundColor = .white
+        navigationItem.title = "Movie List"
         
         stackView.axis = .vertical
         stackView.alignment = .fill

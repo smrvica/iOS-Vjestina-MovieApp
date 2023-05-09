@@ -18,8 +18,11 @@ class MovieCategorisedCollectionView : UIView {
     var categoryString : String!
     let reuseId = "cell"
     
-    init(category: String, listOfMovies: [MovieModel]) {
+    private var movieDetailsRouter: MovieDetailsRouter!
+    
+    init(category: String, listOfMovies: [MovieModel], router: MovieDetailsRouter) {
         super.init(frame: .zero)
+        movieDetailsRouter = router
         categoryString = category
         movieList = listOfMovies
         buildViews()
@@ -80,7 +83,7 @@ extension MovieCategorisedCollectionView : UICollectionViewDataSource, UICollect
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = categoryCollectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! MovieImageCell
         let movie = movieList[indexPath.item]
-        cell.setData(imageURL: movie.imageUrl)
+        cell.setData(imageURL: movie.imageUrl, id: movie.id, router: movieDetailsRouter)
         
         return cell
     }
