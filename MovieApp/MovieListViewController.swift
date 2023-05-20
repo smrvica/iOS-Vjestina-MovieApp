@@ -10,11 +10,10 @@ import UIKit
 import PureLayout
 import MovieAppData
 
-class MovieListViewController : UIViewController {
+class MovieListViewController: UIViewController {
     
-    var movieCollectionView : UICollectionView!
-    var movieList: [MovieModel]!
-    let reuseId = "cell"
+    private var movieCollectionView: UICollectionView!
+    private var movieList: [MovieModel]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +40,7 @@ class MovieListViewController : UIViewController {
         movieCollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         movieCollectionView.dataSource = self
         movieCollectionView.delegate = self
-        movieCollectionView.register(MovieSummaryCell.self, forCellWithReuseIdentifier: reuseId)
+        movieCollectionView.register(MovieSummaryCell.self, forCellWithReuseIdentifier: MovieSummaryCell.reuseIdentifier)
         view.addSubview(movieCollectionView)
     }
     
@@ -64,7 +63,7 @@ extension MovieListViewController: UICollectionViewDataSource, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = movieCollectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! MovieSummaryCell
+        guard let cell = movieCollectionView.dequeueReusableCell(withReuseIdentifier: MovieSummaryCell.reuseIdentifier, for: indexPath) as? MovieSummaryCell else { fatalError() }
         let movie = movieList[indexPath.item]
         cell.setData(name: movie.name, summary: movie.summary, imageURL: movie.imageUrl)
         

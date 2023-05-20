@@ -9,20 +9,22 @@ import Foundation
 import UIKit
 import PureLayout
 
-class MovieImageCell : UICollectionViewCell {
+class MovieImageCell: UICollectionViewCell {
     
-    var movieImage : UIImageView!
-    var heartButton : UIButton!
-    var heartImageView : UIImageView!
+    private var movieImage: UIImageView!
+    private var heartButton: UIButton!
+    private var heartImageView: UIImageView!
+    
+    static let reuseIdentifier = String(describing: MovieImageCell.self)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.buildViews()
+        buildViews()
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.buildViews()
+        buildViews()
     }
     
     private func buildViews() {
@@ -56,8 +58,8 @@ class MovieImageCell : UICollectionViewCell {
         
         movieImage.contentMode = .scaleAspectFill
         
-        self.layer.cornerRadius = 10
-        self.clipsToBounds = true // maybe masks to bounds
+        layer.cornerRadius = 10
+        clipsToBounds = true // maybe masks to bounds
     }
     
     private func defineLayout() {

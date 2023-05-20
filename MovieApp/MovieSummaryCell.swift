@@ -9,20 +9,22 @@ import Foundation
 import UIKit
 import PureLayout
 
-class MovieSummaryCell : UICollectionViewCell {
+class MovieSummaryCell: UICollectionViewCell {
     
-    var movieNameLabel : UILabel!
-    var movieSummaryLabel : UILabel!
-    var movieImage : UIImageView!
+    private var movieNameLabel: UILabel!
+    private var movieSummaryLabel: UILabel!
+    private var movieImage: UIImageView!
+    
+    static let reuseIdentifier = String(describing: MovieSummaryCell.self)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.buildViews()
+        buildViews()
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.buildViews()
+        buildViews()
     }
     
     private func buildViews() {
@@ -49,7 +51,7 @@ class MovieSummaryCell : UICollectionViewCell {
     }
     
     private func styleViews() {
-        self.backgroundColor = .white
+        backgroundColor = .white
         movieNameLabel.font = .boldSystemFont(ofSize: 16)
         
         movieSummaryLabel.font = .systemFont(ofSize: 14)
@@ -62,10 +64,10 @@ class MovieSummaryCell : UICollectionViewCell {
         contentView.layer.cornerRadius = 10
         contentView.clipsToBounds = true
         
-        self.layer.shadowColor = CGColor(gray: 0, alpha: 0.1)
-        self.layer.shadowOpacity = 1
-        self.layer.shadowRadius = 20
-        self.layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowColor = CGColor(gray: 0, alpha: 0.1)
+        layer.shadowOpacity = 1
+        layer.shadowRadius = 20
+        layer.shadowOffset = CGSize(width: 0, height: 4)
     }
     
     private func defineLayout() {

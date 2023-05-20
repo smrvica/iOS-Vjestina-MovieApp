@@ -12,13 +12,12 @@ import MovieAppData
 
 class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
-    var movieBanner: MovieBanner!
-    var details: MovieDetailsModel?
-    var overview: UILabel!
-    var summary: UILabel!
-    var roleCollectionView: UICollectionView!
-    var crewList: [MovieCrewMemberModel]!
-    let reuseIdentifier = "cell"
+    private var movieBanner: MovieBanner!
+    private var details: MovieDetailsModel?
+    private var overview: UILabel!
+    private var summary: UILabel!
+    private var roleCollectionView: UICollectionView!
+    private var crewList: [MovieCrewMemberModel]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,7 +54,7 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         roleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: roleLayout)
         roleCollectionView.dataSource = self
         roleCollectionView.delegate = self
-        roleCollectionView.register(CrewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        roleCollectionView.register(CrewCell.self, forCellWithReuseIdentifier: CrewCell.reuseIdentifier)
         view.addSubview(roleCollectionView)
     }
     
@@ -96,7 +95,7 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = roleCollectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! CrewCell
+        guard let cell = roleCollectionView.dequeueReusableCell(withReuseIdentifier: CrewCell.reuseIdentifier, for: indexPath) as? CrewCell else { fatalError() }
         let crewMember = crewList[indexPath.item]
         cell.setText(name: crewMember.name, role: crewMember.role)
         return cell
