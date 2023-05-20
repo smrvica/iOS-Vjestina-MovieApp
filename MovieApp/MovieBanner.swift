@@ -12,16 +12,16 @@ import MovieAppData
 
 class MovieBanner: UIView {
     
-    let score = UILabel()
-    let userScore = UILabel()
-    let title = UILabel()
-    let date = UILabel()
-    let categories = UILabel()
-    let star = UIButton()
-    var imageBackground = UIImageView()
-    var categoriesStr = ""
+    private let score = UILabel()
+    private let userScore = UILabel()
+    private let title = UILabel()
+    private let date = UILabel()
+    private let categories = UILabel()
+    private let star = UIButton()
+    private var imageBackground = UIImageView()
+    private var categoriesStr = ""
     
-    var details: MovieDetailsModel?
+    private var details: MovieDetailsModel?
     
     init(details: MovieDetailsModel?) {
         self.details = details

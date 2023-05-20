@@ -16,7 +16,7 @@ class InputField: UIView {
     private var inputField: UITextField!
     private let placeHolder: String
     
-    let color = UIColor(red: 76/255, green: 178/255, blue: 223/255, alpha: 1)
+    private let color = UIColor(red: 76/255, green: 178/255, blue: 223/255, alpha: 1)
     
     init(labelText: String, placeHolder: String) {
         self.labelText = labelText
