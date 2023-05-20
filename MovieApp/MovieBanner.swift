@@ -68,7 +68,7 @@ class MovieBanner: UIView {
         }
         self.addSubview(date)
         
-        let category = [MovieCategoryModel.action, MovieCategoryModel.adventure, MovieCategoryModel.drama, MovieCategoryModel.scienceFiction]
+        let category = details.categories
         categoriesStr = category
             .map { (category: MovieCategoryModel) -> String in return capitalSplitString(string: String(describing: category)).capitalized }
             .joined(separator: ", ")
@@ -96,6 +96,8 @@ class MovieBanner: UIView {
         
         date.textColor = .white
         date.font = UIFont.systemFont(ofSize: 14)
+        
+        categories.textColor = .white
         
         let starImage = UIImage(systemName: "star")
         star.setImage(starImage, for: .normal)
