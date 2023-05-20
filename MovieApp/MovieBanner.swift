@@ -12,21 +12,21 @@ import MovieAppData
 
 class MovieBanner: UIView {
     
-    let score = UILabel()
-    let userScore = UILabel()
-    let title = UILabel()
-    let date = UILabel()
-    let categories = UILabel()
-    let star = UIButton()
-    var imageBackground = UIImageView()
-    var categoriesStr = ""
+    private let score = UILabel()
+    private let userScore = UILabel()
+    private let title = UILabel()
+    private let date = UILabel()
+    private let categories = UILabel()
+    private let star = UIButton()
+    private var imageBackground = UIImageView()
+    private var categoriesStr = ""
     
-    var details: MovieDetailsModel?
+    private var details: MovieDetailsModel?
     
     init(details: MovieDetailsModel?) {
         self.details = details
         super.init(frame: .zero)
-        self.configure()
+        configure()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -47,15 +47,15 @@ class MovieBanner: UIView {
             await loadImage(imageURL: details.imageUrl, imageView: imageBackground)
         }
         score.text = String(details.rating)
-        self.addSubview(score)
+        addSubview(score)
         
         userScore.text = "User Score"
-        self.addSubview(userScore)
+        addSubview(userScore)
         
         let movieTitle = NSMutableAttributedString(string: details.name, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)])
         movieTitle.append(NSMutableAttributedString(string: String(format: " (%d)", details.year), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]))
         title.attributedText = movieTitle
-        self.addSubview(title)
+        addSubview(title)
         
         let dateString = details.releaseDate
         let dateForm0 = DateFormatter()
@@ -66,7 +66,7 @@ class MovieBanner: UIView {
         if dateChange != nil {
             date.text = dateForm1.string(from: dateChange!)
         }
-        self.addSubview(date)
+        addSubview(date)
         
         let category = details.categories
         categoriesStr = category
@@ -75,11 +75,11 @@ class MovieBanner: UIView {
         let catText = NSMutableAttributedString(string: categoriesStr, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
         catText.append(NSMutableAttributedString(string: String(format: " %dh %dm", details.duration / 60, details.duration % 60), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
         categories.attributedText = catText
-        self.addSubview(categories)
+        addSubview(categories)
         
-        self.addSubview(star)
-        self.addSubview(imageBackground)
-        self.sendSubviewToBack(imageBackground)
+        addSubview(star)
+        addSubview(imageBackground)
+        sendSubviewToBack(imageBackground)
     }
     
     private func style() {

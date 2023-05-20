@@ -18,6 +18,8 @@ class MovieSummaryCell: UICollectionViewCell {
     private var movieId: Int!
     private var movieDetailsRouter: MovieDetailsRouter!
     
+    static let reuseIdentifier = String(describing: MovieSummaryCell.self)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         buildViews()

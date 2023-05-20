@@ -10,18 +10,18 @@ import UIKit
 import PureLayout
 import MovieAppData
 
-class MovieCategorisedViewController : UIViewController {
+class MovieCategorisedViewController: UIViewController {
     
-    private var scrollView : UIScrollView!
-    private var contentView : UIView!
-    private var stackView : UIStackView!
+    private var scrollView: UIScrollView!
+    private var contentView: UIView!
+    private var stackView: UIStackView!
     
-    private var moviePopularList : [MovieModel]!
-    private var moviePopularCollectionView : MovieCategorisedCollectionView!
-    private var movieFreeList : [MovieModel]!
-    private var movieFreeCollectionView : MovieCategorisedCollectionView!
-    private var movieTrendingList : [MovieModel]!
-    private var movieTrendingCollectionView : MovieCategorisedCollectionView!
+    private var moviePopularList: [MovieModel]!
+    private var moviePopularCollectionView: MovieCategorisedCollectionView!
+    private var movieFreeList: [MovieModel]!
+    private var movieFreeCollectionView: MovieCategorisedCollectionView!
+    private var movieTrendingList: [MovieModel]!
+    private var movieTrendingCollectionView: MovieCategorisedCollectionView!
     
     private let movieDetailsRouter: MovieDetailsRouter
     

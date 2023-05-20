@@ -10,13 +10,12 @@ import UIKit
 import PureLayout
 import MovieAppData
 
-class MovieCategorisedCollectionView : UIView {
+class MovieCategorisedCollectionView: UIView {
     
-    var categoryCollectionView : UICollectionView!
-    var categoryLabel : UILabel!
-    var movieList : [MovieModel]!
-    var categoryString : String!
-    let reuseId = "cell"
+    private var categoryCollectionView: UICollectionView!
+    private var categoryLabel: UILabel!
+    private var movieList: [MovieModel]!
+    private var categoryString: String!
     
     private var movieDetailsRouter: MovieDetailsRouter!
     
@@ -43,7 +42,7 @@ class MovieCategorisedCollectionView : UIView {
     
     private func createViews() {
         categoryLabel = UILabel()
-        self.addSubview(categoryLabel)
+        addSubview(categoryLabel)
         
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
@@ -53,8 +52,8 @@ class MovieCategorisedCollectionView : UIView {
         categoryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         categoryCollectionView.dataSource = self
         categoryCollectionView.delegate = self
-        categoryCollectionView.register(MovieImageCell.self, forCellWithReuseIdentifier: reuseId)
-        self.addSubview(categoryCollectionView)
+        categoryCollectionView.register(MovieImageCell.self, forCellWithReuseIdentifier: MovieImageCell.reuseIdentifier)
+        addSubview(categoryCollectionView)
     }
     
     private func styleViews() {
@@ -81,7 +80,7 @@ extension MovieCategorisedCollectionView : UICollectionViewDataSource, UICollect
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = categoryCollectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! MovieImageCell
+        guard let cell = categoryCollectionView.dequeueReusableCell(withReuseIdentifier: MovieImageCell.reuseIdentifier, for: indexPath) as? MovieImageCell else { fatalError() }
         let movie = movieList[indexPath.item]
         cell.setData(imageURL: movie.imageUrl, id: movie.id, router: movieDetailsRouter)
         

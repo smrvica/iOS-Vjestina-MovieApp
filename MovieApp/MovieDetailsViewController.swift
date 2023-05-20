@@ -18,7 +18,6 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     private var summary: UILabel!
     private var roleCollectionView: UICollectionView!
     private var crewList: [MovieCrewMemberModel]!
-    private let reuseIdentifier = "cell"
 
     private let movieId: Int
     
@@ -79,7 +78,7 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         roleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: roleLayout)
         roleCollectionView.dataSource = self
         roleCollectionView.delegate = self
-        roleCollectionView.register(CrewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        roleCollectionView.register(CrewCell.self, forCellWithReuseIdentifier: CrewCell.reuseIdentifier)
         view.addSubview(roleCollectionView)
         
     }
@@ -122,7 +121,7 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = roleCollectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! CrewCell
+        guard let cell = roleCollectionView.dequeueReusableCell(withReuseIdentifier: CrewCell.reuseIdentifier, for: indexPath) as? CrewCell else { fatalError() }
         let crewMember = crewList[indexPath.item]
         cell.setText(name: crewMember.name, role: crewMember.role)
         return cell
