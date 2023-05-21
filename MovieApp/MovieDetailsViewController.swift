@@ -12,17 +12,27 @@ import MovieAppData
 
 class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
-    var movieBanner: MovieBanner!
-    var details: MovieDetailsModel?
-    var overview: UILabel!
-    var summary: UILabel!
-    var roleCollectionView: UICollectionView!
-    var crewList: [MovieCrewMemberModel]!
-    let reuseIdentifier = "cell"
+    private var movieBanner: MovieBanner!
+    private var details: MovieDetailsModel?
+    private var overview: UILabel!
+    private var summary: UILabel!
+    private var roleCollectionView: UICollectionView!
+    private var crewList: [MovieCrewMemberModel]!
+
+    private let movieId: Int
+    
+    init(movieId: Int) {
+        self.movieId = movieId
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        details = MovieUseCase().getDetails(id: 111161)
+        details = MovieUseCase().getDetails(id: movieId)
         guard let details else {return}
         crewList = details.crewMembers
         createViews()
@@ -32,6 +42,19 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+            
+        summary.transform = summary.transform.translatedBy(x: -view.frame.width, y: 0)
+        roleCollectionView.alpha = 0
+    }
+        
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIView.animate( withDuration: 0.2, animations: { self.summary.transform = .identity })
+        UIView.animate( withDuration: 0.3, delay: 0.2, animations: { self.roleCollectionView.alpha = 1})
     }
     
     private func createViews() {
@@ -55,8 +78,9 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         roleCollectionView = UICollectionView(frame: .zero, collectionViewLayout: roleLayout)
         roleCollectionView.dataSource = self
         roleCollectionView.delegate = self
-        roleCollectionView.register(CrewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        roleCollectionView.register(CrewCell.self, forCellWithReuseIdentifier: CrewCell.reuseIdentifier)
         view.addSubview(roleCollectionView)
+        
     }
     
     private func styleViews() {
@@ -70,16 +94,17 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         summary.lineBreakMode = .byWordWrapping
         
         roleCollectionView.backgroundColor = .white
+        
+        navigationItem.title = "Movie details"
     }
     
     private func defineLayout() {
-        movieBanner.autoPinEdge(toSuperviewEdge: .top)
-        movieBanner.autoPinEdge(toSuperviewEdge: .leading)
-        movieBanner.autoPinEdge(toSuperviewEdge: .trailing)
+        movieBanner.autoPinEdge(toSuperviewSafeArea: .top)
+        movieBanner.autoMatch(.width, to: .width, of: view)
         
         overview.autoPinEdge(.top, to: .bottom, of: movieBanner, withOffset: 22)
         overview.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-        overview.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
+        overview.autoSetDimension(.height, toSize: 31)
         
         summary.autoPinEdge(.top, to: .bottom, of: overview, withOffset: 8)
         summary.autoMatch(.width, to: .width, of: view, withOffset: -32)
@@ -92,11 +117,11 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        crewList.count
+        return crewList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = roleCollectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! CrewCell
+        guard let cell = roleCollectionView.dequeueReusableCell(withReuseIdentifier: CrewCell.reuseIdentifier, for: indexPath) as? CrewCell else { fatalError() }
         let crewMember = crewList[indexPath.item]
         cell.setText(name: crewMember.name, role: crewMember.role)
         return cell
