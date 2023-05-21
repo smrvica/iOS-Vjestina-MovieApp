@@ -12,6 +12,7 @@ import MovieAppData
 
 class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
+    // treba
     private var movieBanner: MovieBanner!
     private var details: MovieDetailsModel?
     private var overview: UILabel!

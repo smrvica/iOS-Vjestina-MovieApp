@@ -10,7 +10,7 @@ import UIKit
 import PureLayout
 import MovieAppData
 
-class MovieCategorisedCollectionView: UIView {
+class MovieCategorisedCollectionView: UIView { // treba
     
     private var categoryCollectionView: UICollectionView!
     private var categoryLabel: UILabel!

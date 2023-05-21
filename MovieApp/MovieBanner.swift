@@ -10,7 +10,7 @@ import UIKit
 import PureLayout
 import MovieAppData
 
-class MovieBanner: UIView {
+class MovieBanner: UIView { // treba
     
     private let score = UILabel()
     private let userScore = UILabel()
