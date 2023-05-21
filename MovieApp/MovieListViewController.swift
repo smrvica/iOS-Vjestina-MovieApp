@@ -13,7 +13,7 @@ import MovieAppData
 class MovieListViewController: UIViewController {
     
     private var movieCollectionView: UICollectionView!
-    private var movieList: [MovieModel]!
+    private var movieList: [MovieAppData.MovieModel]!
     
     private let movieDetailsRouter: MovieDetailsRouter
     

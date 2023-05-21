@@ -8,29 +8,26 @@
 import Foundation
 import UIKit
 import PureLayout
-import MovieAppData
 
-class MovieBanner: UIView { // treba
+class MovieBanner: UIView {
     
-    private let score = UILabel()
-    private let userScore = UILabel()
-    private let title = UILabel()
-    private let date = UILabel()
-    private let categories = UILabel()
-    private let star = UIButton()
-    private var imageBackground = UIImageView()
+    private var score: UILabel!
+    private var userScore: UILabel!
+    private var title: UILabel!
+    private var date: UILabel!
+    private var categories: UILabel!
+    private var star: UIButton!
+    private var imageBackground: UIImageView!
     private var categoriesStr = ""
     
-    private var details: MovieDetailsModel?
+    private var details: MovieDetailsModel? = nil
     
-    init(details: MovieDetailsModel?) {
-        self.details = details
+    init() {
         super.init(frame: .zero)
         configure()
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.details = nil
         super.init(coder: aDecoder)
         self.configure()
     }
@@ -42,42 +39,24 @@ class MovieBanner: UIView { // treba
     }
     
     private func create() {
-        guard let details else { return }
-        Task {
-            await loadImage(imageURL: details.imageUrl, imageView: imageBackground)
-        }
-        score.text = String(details.rating)
+        score = UILabel()
         addSubview(score)
         
-        userScore.text = "User Score"
+        userScore = UILabel()
         addSubview(userScore)
         
-        let movieTitle = NSMutableAttributedString(string: details.name, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)])
-        movieTitle.append(NSMutableAttributedString(string: String(format: " (%d)", details.year), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]))
-        title.attributedText = movieTitle
+        title = UILabel()
         addSubview(title)
         
-        let dateString = details.releaseDate
-        let dateForm0 = DateFormatter()
-        let dateForm1 = DateFormatter()
-        dateForm0.dateFormat = "yyyy-MM-dd"
-        dateForm1.dateFormat = "MM/dd/yyyy"
-        let dateChange = dateForm0.date(from: dateString)
-        if dateChange != nil {
-            date.text = dateForm1.string(from: dateChange!)
-        }
+        date = UILabel()
         addSubview(date)
         
-        let category = details.categories
-        categoriesStr = category
-            .map { (category: MovieCategoryModel) -> String in return capitalSplitString(string: String(describing: category)).capitalized }
-            .joined(separator: ", ")
-        let catText = NSMutableAttributedString(string: categoriesStr, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
-        catText.append(NSMutableAttributedString(string: String(format: " %dh %dm", details.duration / 60, details.duration % 60), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
-        categories.attributedText = catText
+        categories = UILabel()
         addSubview(categories)
         
+        star = UIButton()
         addSubview(star)
+        imageBackground = UIImageView()
         addSubview(imageBackground)
         sendSubviewToBack(imageBackground)
     }
@@ -89,6 +68,7 @@ class MovieBanner: UIView { // treba
         score.textColor = .white
         score.font = UIFont.boldSystemFont(ofSize: 16)
         
+        userScore.text = "User Score"
         userScore.textColor = .white
         userScore.font = UIFont.systemFont(ofSize: 14)
         
@@ -145,13 +125,16 @@ class MovieBanner: UIView { // treba
     }
     
     func loadImage (imageURL: String, imageView: UIImageView) async {
+        guard let URL = URL(string: imageURL) else { return }
+        
         do {
-            let url = URL(string: imageURL)
-            let data = try Data(contentsOf: url!)
-            let image = UIImage(data: data)
-            imageBackground.image = image
+            let (data, _) = try await URLSession.shared.data(from: URL)
+            DispatchQueue.main.async {
+                let image = UIImage(data: data)
+                imageView.image = image
+            }
         } catch {
-            return
+            print("Error loading image: \(error)")
         }
     }
     
@@ -164,5 +147,37 @@ class MovieBanner: UIView { // treba
             }
         }
         return splitString
+    }
+    
+    func setDetails(details: MovieDetailsModel?) {
+        self.details = details
+        guard let details else { return }
+        
+        Task {
+            await loadImage(imageURL: details.imageUrl, imageView: imageBackground)
+        }
+        score.text = String(details.rating)
+        
+        let movieTitle = NSMutableAttributedString(string: details.name, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)])
+        movieTitle.append(NSMutableAttributedString(string: String(format: " (%d)", details.year), attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]))
+        title.attributedText = movieTitle
+        
+        let dateString = details.releaseDate
+        let dateForm0 = DateFormatter()
+        let dateForm1 = DateFormatter()
+        dateForm0.dateFormat = "yyyy-MM-dd"
+        dateForm1.dateFormat = "MM/dd/yyyy"
+        let dateChange = dateForm0.date(from: dateString)
+        if dateChange != nil {
+            date.text = dateForm1.string(from: dateChange!)
+        }
+        
+        let category = details.categories
+        categoriesStr = category
+            .map { (category: MovieCategoryModel) -> String in return capitalSplitString(string: String(describing: category)).capitalized }
+            .joined(separator: ", ")
+        let catText = NSMutableAttributedString(string: categoriesStr, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
+        catText.append(NSMutableAttributedString(string: String(format: " %dh %dm", details.duration / 60, details.duration % 60), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
+        categories.attributedText = catText
     }
 }

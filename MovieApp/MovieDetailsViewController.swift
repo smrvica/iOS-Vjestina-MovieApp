@@ -8,11 +8,10 @@
 import Foundation
 import UIKit
 import PureLayout
-import MovieAppData
+import Combine
 
 class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
-    // treba
     private var movieBanner: MovieBanner!
     private var details: MovieDetailsModel?
     private var overview: UILabel!
@@ -22,8 +21,12 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
 
     private let movieId: Int
     
-    init(movieId: Int) {
+    private var detailsViewModel: MovieDetailsViewModel
+    private var disposable = Set<AnyCancellable>()
+    
+    init(movieId: Int, viewModel: MovieDetailsViewModel) {
         self.movieId = movieId
+        detailsViewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -33,12 +36,10 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        details = MovieUseCase().getDetails(id: movieId)
-        guard let details else {return}
-        crewList = details.crewMembers
         createViews()
         styleViews()
         defineLayout()
+        bindData()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -59,9 +60,8 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     }
     
     private func createViews() {
-        guard let details else { return }
         
-        movieBanner = MovieBanner(details: details)
+        movieBanner = MovieBanner()
         view.addSubview(movieBanner)
         
         overview = UILabel()
@@ -69,7 +69,6 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         view.addSubview(overview)
         
         summary = UILabel()
-        summary.text = details.summary
         view.addSubview(summary)
 
         let roleLayout = UICollectionViewFlowLayout()
@@ -117,8 +116,20 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         roleCollectionView.autoPinEdge(toSuperviewEdge: .bottom)
     }
     
+    private func bindData() {
+        detailsViewModel.$movieDetails.sink { [weak self] movie in
+            self?.details = movie
+            DispatchQueue.main.async {
+                self?.movieBanner.setDetails(details: self?.details)
+                self?.summary.text = self?.details?.summary
+                self?.crewList = self?.details?.crewMembers
+                self?.roleCollectionView.reloadData()
+            }
+        }.store(in: &disposable)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return crewList.count
+        return crewList != nil ? crewList.count : 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

@@ -8,9 +8,8 @@
 import Foundation
 import UIKit
 import PureLayout
-import MovieAppData
 
-class MovieCategorisedCollectionView: UIView { // treba
+class MovieCategorisedCollectionView: UIView {
     
     private var categoryCollectionView: UICollectionView!
     private var categoryLabel: UILabel!
@@ -71,6 +70,13 @@ class MovieCategorisedCollectionView: UIView { // treba
         categoryCollectionView.autoPinEdge(toSuperviewEdge: .leading)
         categoryCollectionView.autoPinEdge(toSuperviewEdge: .trailing)
         categoryCollectionView.autoSetDimension(.height, toSize: 179)
+    }
+    
+    func setMovieList(movies: [MovieModel]) {
+        movieList = movies
+        DispatchQueue.main.async {
+            self.categoryCollectionView.reloadData()
+        }
     }
 }
 

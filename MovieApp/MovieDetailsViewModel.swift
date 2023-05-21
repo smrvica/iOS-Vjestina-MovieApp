@@ -24,9 +24,19 @@ class MovieDetailsViewModel: ObservableObject {
     
     func fetchMovieDetails(id: Int) async {
         do {
-            movieDetails = try await movieDataSource.fetchMovieDetails(id: id)
+            let movieDetailsModel = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<MovieDetailsModel, Error>) in
+                movieDataSource.fetchMovieDetails(id: id) { result in
+                    switch result {
+                    case .success(let movieDetailsModel):
+                        continuation.resume(returning: movieDetailsModel)
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+            self.movieDetails = movieDetailsModel
         } catch {
-            print("Error fetching movie details \(error)")
+            print("Error fetching movie details: \(error)")
         }
     }
 }

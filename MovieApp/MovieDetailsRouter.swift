@@ -8,16 +8,19 @@
 import Foundation
 import UIKit
 
-class MovieDetailsRouter { // treba
+class MovieDetailsRouter {
     
     private let navigationController: UINavigationController
+    private let movieDataSource: MovieDataSource
     
-    init(with navigationController: UINavigationController) {
+    init(with navigationController: UINavigationController, dataSource: MovieDataSource) {
+        movieDataSource = dataSource
         self.navigationController = navigationController
     }
     
     func openDetails(movieId: Int) {
-        let viewController = MovieDetailsViewController(movieId: movieId)
+        let detailsViewModel = MovieDetailsViewModel(movieDataSource: movieDataSource, id: movieId)
+        let viewController = MovieDetailsViewController(movieId: movieId, viewModel: detailsViewModel)
         navigationController.pushViewController(viewController, animated: true)
     }
 }

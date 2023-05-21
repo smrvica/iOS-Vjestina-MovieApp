@@ -101,11 +101,11 @@
 				6E6E92F62A1A9FF2002EC674 /* MovieDataSource.swift */,
 				6E40C69D2A0AD702005D70CA /* MovieDetailsRouter.swift */,
 				6E6ACD7A29D9EB7500439257 /* MovieDetailsViewController.swift */,
+				6E6E92F82A1AA043002EC674 /* MovieDetailsViewModel.swift */,
 				6EE698D229E703CB006B8CD8 /* MovieImageCell.swift */,
 				6EE698CC29E6BABB006B8CD8 /* MovieListViewController.swift */,
 				6EE698CE29E6CBED006B8CD8 /* MovieSummaryCell.swift */,
 				6E6ACD5829D1D50E00439257 /* SceneDelegate.swift */,
-				6E6E92F82A1AA043002EC674 /* MovieDetailsViewModel.swift */,
 			);
 			path = MovieApp;
 			sourceTree = "<group>";
