@@ -17,10 +17,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let windowScene = scene as? UIWindowScene
-        else{ return }
+        else { return }
         window = UIWindow(windowScene: windowScene)
-        let viewController = MovieDetailsViewController()
-        window?.rootViewController = viewController
+        
+        let movieDetailsNavigationController = UINavigationController()
+        let router = MovieDetailsRouter(with: movieDetailsNavigationController)
+        let movieListController = MovieCategorisedViewController(router: router)
+        movieDetailsNavigationController.pushViewController(movieListController, animated: true)
+
+        movieDetailsNavigationController.tabBarItem = UITabBarItem(title: "Movie list", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        let favoritesController = FavoritesViewController()
+        favoritesController.tabBarItem = UITabBarItem(title: "Favorites", image: UIImage(systemName: "heart"), selectedImage: UIImage(systemName: "heart.fill"))
+        let tabBarController = UITabBarController()
+        tabBarController.tabBar.tintColor = .black
+        tabBarController.viewControllers = [ movieDetailsNavigationController, favoritesController ]
+
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()                     
     }
 
