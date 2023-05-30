@@ -14,6 +14,8 @@ class CrewCell: UICollectionViewCell {
     private var crewName: UILabel!
     private var crewRole: UILabel!
     
+    static let reuseIdentifier = String(describing: CrewCell.self)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.buildViews()
