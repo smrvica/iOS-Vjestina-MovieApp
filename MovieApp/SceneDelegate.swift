@@ -19,8 +19,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene
         else{ return }
         window = UIWindow(windowScene: windowScene)
-        let viewController = MovieDetailsViewController()
-        window?.rootViewController = viewController
+        
+        let dataSource = MovieDataSource()
+        let categorisedViewModel = MovieCategorisedViewModel(movieDataSource: dataSource)
+        let favoritesViewModel = FavoritesViewModel(dataSource: dataSource)
+        
+        let movieDetailsNavigationController = UINavigationController()
+        let router = MovieDetailsRouter(with: movieDetailsNavigationController, dataSource: dataSource, favViewModel: favoritesViewModel)
+        let movieListController = MovieCategorisedViewController(router: router, viewModel: categorisedViewModel, favViewModel: favoritesViewModel)
+        movieDetailsNavigationController.pushViewController(movieListController, animated: true)
+
+        movieDetailsNavigationController.tabBarItem = UITabBarItem(title: "Movie list", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        let favoritesController = FavoritesViewController(router: router, viewModel: favoritesViewModel)
+        favoritesController.tabBarItem = UITabBarItem(title: "Favorites", image: UIImage(systemName: "heart"), selectedImage: UIImage(systemName: "heart.fill"))
+        let tabBarController = UITabBarController()
+        tabBarController.tabBar.tintColor = .black
+        tabBarController.viewControllers = [ movieDetailsNavigationController, favoritesController ]
+
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()                     
     }
 
