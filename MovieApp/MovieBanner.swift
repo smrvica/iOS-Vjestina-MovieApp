@@ -16,7 +16,7 @@ class MovieBanner: UIView {
     private var title: UILabel!
     private var date: UILabel!
     private var categories: UILabel!
-    private var star: UIButton!
+    var heart: UIButton!
     private var imageBackground: UIImageView!
     private var categoriesStr = ""
     
@@ -54,8 +54,9 @@ class MovieBanner: UIView {
         categories = UILabel()
         addSubview(categories)
         
-        star = UIButton()
-        addSubview(star)
+        heart = UIButton()
+        addSubview(heart)
+                
         imageBackground = UIImageView()
         addSubview(imageBackground)
         sendSubviewToBack(imageBackground)
@@ -79,13 +80,11 @@ class MovieBanner: UIView {
         
         categories.textColor = .white
         
-        let starImage = UIImage(systemName: "star")
-        star.setImage(starImage, for: .normal)
-        star.imageView?.alpha = 1
-        star.tintColor = .white
-        star.alpha = 0.6
-        star.layer.backgroundColor = UIColor(red: 0.459, green: 0.459, blue: 0.459, alpha: 1).cgColor
-        star.layer.cornerRadius = 32 / 2
+        heart.imageView?.alpha = 1
+        heart.tintColor = .white
+        heart.alpha = 0.6
+        heart.layer.backgroundColor = UIColor(red: 0.459, green: 0.459, blue: 0.459, alpha: 1).cgColor
+        heart.layer.cornerRadius = 32 / 2
     }
     
     private func layout() {
@@ -117,11 +116,11 @@ class MovieBanner: UIView {
         categories.numberOfLines = 1
         categories.lineBreakMode = .byWordWrapping
         
-        star.autoPinEdge(.top, to: .bottom, of: categories, withOffset: 16)
-        star.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-        star.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
-        star.autoSetDimension(.width, toSize: 32)
-        star.autoSetDimension(.height, toSize: 32)
+        heart.autoPinEdge(.top, to: .bottom, of: categories, withOffset: 16)
+        heart.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
+        heart.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
+        heart.autoSetDimension(.width, toSize: 32)
+        heart.autoSetDimension(.height, toSize: 32)
     }
     
     func loadImage (imageURL: String, imageView: UIImageView) async {
@@ -179,5 +178,16 @@ class MovieBanner: UIView {
         let catText = NSMutableAttributedString(string: categoriesStr, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)])
         catText.append(NSMutableAttributedString(string: String(format: " %dh %dm", details.duration / 60, details.duration % 60), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)]))
         categories.attributedText = catText
+    }
+    
+    func changeFavorite(favorite: Bool) {
+        var heartImage: UIImage?
+        
+        if favorite {
+            heartImage = UIImage(systemName: "heart.fill")
+        } else {
+            heartImage = UIImage(systemName: "heart")
+        }
+        heart.setImage(heartImage, for: .normal)
     }
 }

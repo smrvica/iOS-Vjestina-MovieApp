@@ -15,6 +15,10 @@ class MovieImageCell: UICollectionViewCell {
     private var heartButton: UIButton!
     private var heartImageView: UIImageView!
     private var movieButton: UIButton!
+    
+    private var favorite: Bool!
+    private var changeFavorite: ((Int) -> Void)?
+    
     private var movieId: Int!
     private var movieDetailsRouter: MovieDetailsRouter!
     
@@ -36,9 +40,20 @@ class MovieImageCell: UICollectionViewCell {
         defineLayout()
     }
     
-    public func setData(imageURL: String, id: Int, router: MovieDetailsRouter) {
+    public func setData(imageURL: String, id: Int, router: MovieDetailsRouter, isFavorite: Bool, changeFavoriteFunc: @escaping (Int) -> Void) {
         movieId = id
         movieDetailsRouter = router
+        favorite = isFavorite
+        changeFavorite = changeFavoriteFunc
+        DispatchQueue.main.async {
+            if self.favorite {
+                let heartImage = UIImage(systemName: "heart.fill")
+                self.heartImageView.image = heartImage
+            } else {
+                let heartImage = UIImage(systemName: "heart")
+                self.heartImageView.image = heartImage
+            }
+        }
         Task {
             await loadImage(imageURL: imageURL, imageView: movieImage)
         }
@@ -48,17 +63,20 @@ class MovieImageCell: UICollectionViewCell {
         movieButton = UIButton()
         movieButton.addTarget(self, action: #selector(openDetails), for: .touchUpInside)
         contentView.addSubview(movieButton)
+        
         movieImage = UIImageView()
         movieButton.addSubview(movieImage)
+        
         heartButton = UIButton()
         movieButton.addSubview(heartButton)
+        heartButton.addTarget(self, action: #selector(handleChangeFavorite), for: .touchUpInside)
+        
         heartImageView = UIImageView()
         heartButton.addSubview(heartImageView)
     }
     
     private func styleViews() {
-        let heartImage = UIImage(systemName: "heart")
-        heartImageView.image = heartImage
+        
         heartImageView.tintColor = .white
         heartButton.alpha = 0.6
         heartButton.backgroundColor = UIColor(red: 0.043, green: 0.145, blue: 0.247, alpha: 1)
@@ -96,5 +114,9 @@ class MovieImageCell: UICollectionViewCell {
     
     @objc func openDetails() {
         movieDetailsRouter.openDetails(movieId: movieId)
+    }
+    
+    @objc func handleChangeFavorite() {
+        changeFavorite?(movieId)
     }
 }

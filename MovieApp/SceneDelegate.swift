@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate { // treba
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
@@ -22,14 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate { // treba
         
         let dataSource = MovieDataSource()
         let categorisedViewModel = MovieCategorisedViewModel(movieDataSource: dataSource)
+        let favoritesViewModel = FavoritesViewModel(dataSource: dataSource)
         
         let movieDetailsNavigationController = UINavigationController()
-        let router = MovieDetailsRouter(with: movieDetailsNavigationController, dataSource: dataSource)
-        let movieListController = MovieCategorisedViewController(router: router, viewModel: categorisedViewModel)
+        let router = MovieDetailsRouter(with: movieDetailsNavigationController, dataSource: dataSource, favViewModel: favoritesViewModel)
+        let movieListController = MovieCategorisedViewController(router: router, viewModel: categorisedViewModel, favViewModel: favoritesViewModel)
         movieDetailsNavigationController.pushViewController(movieListController, animated: true)
 
         movieDetailsNavigationController.tabBarItem = UITabBarItem(title: "Movie list", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
-        let favoritesController = FavoritesViewController()
+        let favoritesController = FavoritesViewController(router: router, viewModel: favoritesViewModel)
         favoritesController.tabBarItem = UITabBarItem(title: "Favorites", image: UIImage(systemName: "heart"), selectedImage: UIImage(systemName: "heart.fill"))
         let tabBarController = UITabBarController()
         tabBarController.tabBar.tintColor = .black

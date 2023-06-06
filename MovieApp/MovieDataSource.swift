@@ -11,6 +11,7 @@ import MovieAppData
 class MovieDataSource {
     
     private let baseURL = "https://five-ios-api.herokuapp.com"
+    private let userDefaults = UserDefaults.standard
     
     func fetchFreeMovies(criteria: MovieTagModel, completion: @escaping (Result<[MovieModel], Error>) -> Void) {
         let urlString = baseURL + "/api/v1/movie/free-to-watch?criteria=" + criteria.rawValue
@@ -57,6 +58,35 @@ class MovieDataSource {
         task.resume()
     }
     
+    func fetchBaseMovie(id: Int, completion: @escaping (Result<MovieModel, Error>) -> Void) {
+        
+        let urlString = "\(baseURL)/api/v1/movie/\(id)"
+        let url = URL(string: urlString)!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer Zpu7bOQYLNiCkT32V3c9BPoxDMfxisPAfevLW6ps", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            guard let data = data else {
+                let error = NSError(domain: "Data Error", code: 0)
+                completion(.failure(error))
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let movie = try decoder.decode(MovieModel.self, from: data)
+                completion(.success(movie))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
     func fetchMovies(criteria: MovieTagModel, urlString: String,completion: @escaping (Result<[MovieModel], Error>) -> Void) {
         let url = URL(string: urlString)!
         var request = URLRequest(url: url)
@@ -84,6 +114,27 @@ class MovieDataSource {
         }
         
         task.resume()
+    }
+    
+    func setFavorites(favorites: [Int]) {
+        userDefaults.set(favorites, forKey: "favorite")
+        print("Help")
+        print(favorites)
+    }
+    
+    func getFavorites() -> [Int] {
+        return userDefaults.array(forKey: "favorite") as? [Int] ?? []
+    }
+    
+    func changeFavoriteStatus(id : Int) {
+        var favoritesList = getFavorites()
+        
+        if favoritesList.contains(where: { $0 == id}) {
+            favoritesList.removeAll(where: { $0 == id})
+        } else {
+            favoritesList.append(id)
+        }
+        setFavorites(favorites: favoritesList)
     }
 }
 

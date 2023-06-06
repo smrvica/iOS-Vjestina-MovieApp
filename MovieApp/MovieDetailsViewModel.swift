@@ -11,18 +11,23 @@ import MovieAppData
 class MovieDetailsViewModel: ObservableObject {
     
     private let movieDataSource: MovieDataSource
+    private let favoritesViewModel: FavoritesViewModel
+    private let id: Int
     
     @Published var movieDetails: MovieDetailsModel? = nil
+    @Published var favorite: Bool = false
     
-    init(movieDataSource: MovieDataSource, id: Int) {
+    init(movieDataSource: MovieDataSource, id: Int, favViewModel: FavoritesViewModel) {
         self.movieDataSource = movieDataSource
+        favoritesViewModel = favViewModel
+        self.id = id
         
         Task {
-            await fetchMovieDetails(id: id)
+            await fetchMovieDetails()
         }
     }
     
-    func fetchMovieDetails(id: Int) async {
+    func fetchMovieDetails() async {
         do {
             let movieDetailsModel = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<MovieDetailsModel, Error>) in
                 movieDataSource.fetchMovieDetails(id: id) { result in
@@ -35,8 +40,19 @@ class MovieDetailsViewModel: ObservableObject {
                 }
             }
             self.movieDetails = movieDetailsModel
+            let favorites = movieDataSource.getFavorites()
+            if favorites.contains(where: {$0 == movieDetailsModel.id}) {
+                favorite = true
+            } else {
+                favorite = false
+            }
         } catch {
             print("Error fetching movie details: \(error)")
         }
+    }
+    
+    func changeFavorite() {
+        favoritesViewModel.changeFavorite(id: id)
+        favorite = !favorite
     }
 }

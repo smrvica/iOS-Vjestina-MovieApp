@@ -10,7 +10,7 @@ import UIKit
 import PureLayout
 import Combine
 
-class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MovieDetailsViewController: UIViewController {
     
     private var movieBanner: MovieBanner!
     private var details: MovieDetailsModel?
@@ -20,9 +20,11 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
     private var crewList: [MovieCrewMemberModel]!
 
     private let movieId: Int
+    private var favorite: Bool! = false
     
     private var detailsViewModel: MovieDetailsViewModel
     private var disposable = Set<AnyCancellable>()
+    private var disposableFav = Set<AnyCancellable>()
     
     init(movieId: Int, viewModel: MovieDetailsViewModel) {
         self.movieId = movieId
@@ -63,6 +65,7 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
         
         movieBanner = MovieBanner()
         view.addSubview(movieBanner)
+        movieBanner.heart.addTarget(self, action: #selector(changeFavorite), for: .touchUpInside)
         
         overview = UILabel()
         overview.text = "Overview"
@@ -126,8 +129,21 @@ class MovieDetailsViewController: UIViewController, UICollectionViewDataSource, 
                 self?.roleCollectionView.reloadData()
             }
         }.store(in: &disposable)
+        
+        detailsViewModel.$favorite.sink { [weak self] isFavorite in
+            self?.favorite = isFavorite
+            DispatchQueue.main.async {
+                self?.movieBanner.changeFavorite(favorite: isFavorite)
+            }
+        }.store(in: &disposableFav)
     }
     
+    @objc func changeFavorite() {
+        detailsViewModel.changeFavorite()
+    }
+}
+
+extension MovieDetailsViewController:  UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return crewList != nil ? crewList.count : 0
     }

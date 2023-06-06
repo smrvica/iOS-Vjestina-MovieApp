@@ -16,23 +16,28 @@ class MovieCategorisedViewController: UIViewController {
     private var contentView: UIView!
     private var stackView: UIStackView!
     
-    private var moviePopularList: [MovieModel] = []
+    private var moviePopularList: [[MovieModel]] = []
     private var moviePopularCollectionView: MovieCategorisedCollectionView!
-    private var movieFreeList: [MovieModel] = []
+    private var movieFreeList: [[MovieModel]] = []
     private var movieFreeCollectionView: MovieCategorisedCollectionView!
-    private var movieTrendingList: [MovieModel] = []
+    private var movieTrendingList: [[MovieModel]] = []
     private var movieTrendingCollectionView: MovieCategorisedCollectionView!
+    
+    private var favoritesList: [Int] = []
     
     private let movieDetailsRouter: MovieDetailsRouter
     
     private var movieCategorisedViewModel: MovieCategorisedViewModel!
+    private var favoritesViewModel: FavoritesViewModel!
     private var disposablesFree = Set<AnyCancellable>()
     private var disposablesPopular = Set<AnyCancellable>()
     private var disposablesTrending = Set<AnyCancellable>()
+    private var disposableFav = Set<AnyCancellable>()
     
-    init(router: MovieDetailsRouter, viewModel: MovieCategorisedViewModel) {
+    init(router: MovieDetailsRouter, viewModel: MovieCategorisedViewModel, favViewModel: FavoritesViewModel) {
         movieDetailsRouter = router
         movieCategorisedViewModel = viewModel
+        favoritesViewModel = favViewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -62,11 +67,13 @@ class MovieCategorisedViewController: UIViewController {
         stackView = UIStackView()
         contentView.addSubview(stackView)
         
-        moviePopularCollectionView = MovieCategorisedCollectionView(category: "What's popular", listOfMovies: moviePopularList, router: movieDetailsRouter)
+        moviePopularCollectionView = MovieCategorisedCollectionView(category: "What's popular", listOfMovies: moviePopularList, router: movieDetailsRouter, tags: ["Streaming", "On TV", "For rent", "In theaters"]) { [weak self] id in self?.favoritesViewModel.changeFavorite(id: id)}
         stackView.addArrangedSubview(moviePopularCollectionView)
-        movieFreeCollectionView = MovieCategorisedCollectionView(category: "Free to watch", listOfMovies: movieFreeList, router: movieDetailsRouter)
+        
+        movieFreeCollectionView = MovieCategorisedCollectionView(category: "Free to watch", listOfMovies: movieFreeList, router: movieDetailsRouter, tags: ["Movies", "TV"]) { [weak self] id in self?.favoritesViewModel.changeFavorite(id: id)}
         stackView.addArrangedSubview(movieFreeCollectionView)
-        movieTrendingCollectionView = MovieCategorisedCollectionView(category: "Trending", listOfMovies: movieTrendingList, router: movieDetailsRouter)
+        
+        movieTrendingCollectionView = MovieCategorisedCollectionView(category: "Trending", listOfMovies: movieTrendingList, router: movieDetailsRouter, tags: ["Today", "This Week"]) { [weak self] id in self?.favoritesViewModel.changeFavorite(id: id)}
         stackView.addArrangedSubview(movieTrendingCollectionView)
     }
     
@@ -94,6 +101,14 @@ class MovieCategorisedViewController: UIViewController {
     }
     
     private func bindData() {
+        favoritesViewModel.$favorites.sink { [weak self] movies in
+            let ids = movies.map({$0.id})
+            self?.favoritesList = ids
+            self?.moviePopularCollectionView.setFavoritesList(favorites: ids)
+            self?.movieFreeCollectionView.setFavoritesList(favorites: ids)
+            self?.movieTrendingCollectionView.setFavoritesList(favorites: ids)
+        }.store(in: &disposableFav)
+        
         movieCategorisedViewModel.$popularMoviesList.sink { [weak self] movies in
             self?.moviePopularList = movies
             self?.moviePopularCollectionView.setMovieList(movies: self?.moviePopularList ?? [])

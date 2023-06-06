@@ -12,14 +12,16 @@ class MovieDetailsRouter {
     
     private let navigationController: UINavigationController
     private let movieDataSource: MovieDataSource
+    private let favoritesViewModel: FavoritesViewModel
     
-    init(with navigationController: UINavigationController, dataSource: MovieDataSource) {
+    init(with navigationController: UINavigationController, dataSource: MovieDataSource, favViewModel: FavoritesViewModel) {
+        favoritesViewModel = favViewModel
         movieDataSource = dataSource
         self.navigationController = navigationController
     }
     
     func openDetails(movieId: Int) {
-        let detailsViewModel = MovieDetailsViewModel(movieDataSource: movieDataSource, id: movieId)
+        let detailsViewModel = MovieDetailsViewModel(movieDataSource: movieDataSource, id: movieId, favViewModel: favoritesViewModel)
         let viewController = MovieDetailsViewController(movieId: movieId, viewModel: detailsViewModel)
         navigationController.pushViewController(viewController, animated: true)
     }

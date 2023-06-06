@@ -12,12 +12,12 @@ class MovieCategorisedViewModel: ObservableObject {
     
     private let movieDataSource: MovieDataSource
     private let freeTags = [MovieTagModel.movie, MovieTagModel.tvShow]
-    private let trendingTags = [MovieTagModel.trendingThisWeek, MovieTagModel.trendingToday]
-    private let popularTags = [MovieTagModel.forRent, MovieTagModel.inTheaters, MovieTagModel.onTv, MovieTagModel.streaming]
+    private let trendingTags = [MovieTagModel.trendingToday, MovieTagModel.trendingThisWeek]
+    private let popularTags = [MovieTagModel.streaming, MovieTagModel.onTv, MovieTagModel.forRent, MovieTagModel.inTheaters]
     
-    @Published var popularMoviesList: [MovieModel] = []
-    @Published var freeMoviesList: [MovieModel] = []
-    @Published var trendingMoviesList: [MovieModel] = []
+    @Published var popularMoviesList: [[MovieModel]] = []
+    @Published var freeMoviesList: [[MovieModel]] = []
+    @Published var trendingMoviesList: [[MovieModel]] = []
     
     init(movieDataSource: MovieDataSource) {
         self.movieDataSource = movieDataSource
@@ -30,7 +30,7 @@ class MovieCategorisedViewModel: ObservableObject {
     }
     
     func fetchPopularMovies() async {
-        var movies: [MovieModel] = []
+        var movies: [[MovieModel]] = []
         for tag: MovieTagModel in popularTags {
             do {
                 let movieModels = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[MovieModel], Error>) in
@@ -43,7 +43,7 @@ class MovieCategorisedViewModel: ObservableObject {
                         }
                     }
                 }
-                movies.append(contentsOf: movieModels)
+                movies.append(movieModels)
             } catch {
                 print("Error fetching popular movies: \(error)")
             }
@@ -52,7 +52,7 @@ class MovieCategorisedViewModel: ObservableObject {
     }
     
     func fetchFreeMovies() async {
-        var movies: [MovieModel] = []
+        var movies: [[MovieModel]] = []
         for tag: MovieTagModel in freeTags {
             do {
                 let movieModels = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[MovieModel], Error>) in
@@ -65,7 +65,7 @@ class MovieCategorisedViewModel: ObservableObject {
                         }
                     }
                 }
-                movies.append(contentsOf: movieModels)
+                movies.append(movieModels)
             } catch {
                 print("Error fetching freeToWatch movies: \(error)")
             }
@@ -74,7 +74,7 @@ class MovieCategorisedViewModel: ObservableObject {
     }
     
     func fetchTrendingMovies() async {
-        var movies: [MovieModel] = []
+        var movies: [[MovieModel]] = []
         for tag: MovieTagModel in trendingTags {
             do {
                 let movieModels = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[MovieModel], Error>) in
@@ -87,7 +87,7 @@ class MovieCategorisedViewModel: ObservableObject {
                         }
                     }
                 }
-                movies.append(contentsOf: movieModels)
+                movies.append(movieModels)
             } catch {
                 print("Error fetching trending movies: \(error)")
             }
